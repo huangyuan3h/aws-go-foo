@@ -49,3 +49,10 @@ func delTodo(id string) {
 	var todo = findTodo(id)
 	db.Delete(&todo, 1)
 }
+
+func findAllTodos() []Todo {
+	db := getSingleDB()
+	var todos []Todo
+	db.Find(&todos)
+	return todos
+}
