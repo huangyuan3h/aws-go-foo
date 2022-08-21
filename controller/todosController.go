@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
+	ds "foo.com/dataAccess"
 	"github.com/gin-gonic/gin"
-	"github.com/lucsky/cuid"
 )
 
 type todo struct {
@@ -12,30 +12,18 @@ type todo struct {
 	Text string `json:"text"`
 }
 
-var todos = []todo{
-	{ID: cuid.New(), Text: "text1"},
-}
-
 func getTodos(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, todos)
+	c.IndentedJSON(http.StatusOK, ds.FindAllTodos())
 }
 
 func postTodos(c *gin.Context) {
-
-	todos = append(todos, todo{cuid.New(), c.PostForm("text")})
-	c.IndentedJSON(http.StatusOK, todos)
+	ds.AddTodo(c.PostForm("text"))
+	c.IndentedJSON(http.StatusOK, nil)
 }
 
 func delTodos(c *gin.Context) {
-	filtered := []todo{}
-	deletedID := c.PostForm("id")
-	for _, item := range todos {
-		if item.ID != deletedID {
-			filtered = append(filtered, item)
-		}
-	}
-	todos = filtered
-	c.IndentedJSON(http.StatusOK, todos)
+	ds.DelTodo(c.PostForm("id"))
+	c.IndentedJSON(http.StatusOK, nil)
 }
 
 func main() {
